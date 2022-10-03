@@ -1,0 +1,49 @@
+class Solution {
+public:
+    int maxTotalFruits(vector<vector<int>>& fruits, int startPos, int k) {
+        //inserting the starting point into our sorted array
+        //and start will denote its index in the array.
+        int start=0;
+        while(start<fruits.size() && fruits[start][0]<startPos) start++;
+        fruits.insert(fruits.begin()+start,{startPos,0});
+        int n=fruits.size();
+        
+        
+        //points is the vector which contains the co-ordinates
+        //and prefix is the prefix sum to calculate the number of
+        //fruits between left and right point (inclusive)
+        vector<int>points(n,0),prefix(n+1,0);
+        
+        
+        
+        
+        
+        for(int i=0;i<n;i++) prefix[i+1]=prefix[i]+fruits[i][1];
+        for(int i=0;i<n;i++) points[i]=fruits[i][0];
+        
+        
+        int res=0;
+        for(int i=start;i>=0 && startPos-points[i]<=k;i--){
+            
+            //we first go to the left then right
+            int cur=k-(startPos-points[i]);
+            //we subtract 1 from the upper bound because the element
+            //needed is greater than the current k left and we need
+            //the element which is just before that in the array.
+            int pos = upper_bound(begin(points),end(points),points[i]+cur)-begin(points)-1;
+            //max is taken to ensure that the right part of our 
+            //range includes the start point for sure.
+            int right=max(start+1,pos+1);
+            res=max(res,prefix[right]-prefix[i]);
+            
+            
+            
+            //First right then left
+            cur/=2;
+            pos = upper_bound(begin(points),end(points),points[start]+cur)-points.begin()-1;
+            right=max(start+1,pos+1);
+            res=max(res,prefix[right]-prefix[i]);
+        }
+        return res;
+    }
+};
